@@ -121,5 +121,6 @@ def remove_course(item_request: RemoveItemRequest, username: str = Depends(get_c
 
 @app.get("/logout")
 def logout(response: Response):
-    response.set_cookie("session", 0)    
+    response.set_cookie("session", 0)
+    
     return {"ok": True}
