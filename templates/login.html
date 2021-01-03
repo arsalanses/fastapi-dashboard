@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<form class="ui form" action="login" method="post">
+    <div class="field">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="username" required>
+    </div>
+
+    <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="password" required>
+    </div>
+    <!-- <div class="field">
+        <div class="ui checkbox">
+            <input type="checkbox" tabindex="0" class="hidden">
+            <label>I agree to the Terms and Conditions</label>
+        </div>
+    </div> -->
+    <button class="ui button" type="submit">Submit</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<script>
+    $(document).ready(function () {
+
+        $("#add_btn").click(function () {
+            $('#add_modal').modal('show');
+        })
+
+        $("#remove_btn").click(function () {
+            $('#remove_modal').modal('show');
+            $('select.dropdown').dropdown();
+        })
+
+        $("#Logout_btn").click(function () {
+            $.ajax({
+                url: '/logout',
+                type: 'GET',
+                contentType: 'application/json',
+                data: JSON.stringify({}),
+                dataType: 'json'
+            }).done(function () {
+                window.location.href = "/";
+            })
+        })
+
+        $("#save_btn").click(function () {
+            var name = $("#course_name").val();
+            var score = $("#course_score").val();
+            var value = $("#course_value").val();
+
+            $.ajax({
+                url: '/add',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ "Name": name, "Value": value, "Score": score }),
+                dataType: 'json'
+            }).done(function () {
+                alert('Add done');
+            }).fail(function () {
+                alert('Add fail');
+            })
+
+            $('#add_modal').modal('hide');
+
+        })
+
+        $("#delete_btn").click(function () {
+            var select_remove = $("#select_remove").val();
+
+            if (select_remove.length > 0) {
+                for (let index = 0; index < select_remove.length; index++) {
+                    $.ajax({
+                        url: '/remove',
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ "Name": select_remove[index] }),
+                        dataType: 'json'
+                    }).done(function () {
+                        alert('Remove done');
+                    }).fail(function () {
+                        alert('Remove fail');
+                    })
+                }
+            }
+
+            $('#remove_modal').modal('hide');
+        })
+
+    });
+</script>
+
+<div class="ui segment">
+
+    <!-- <h2 class="ui right floated header">Floated Content</h2> -->
+    <button id="Logout_btn" class="ui button right floated">
+        Logout
+    </button>
+
+    <div class="ui horizontal list">
+        <div class="item">
+            <img class="ui mini circular image" src="https://semantic-ui.com/images/avatar2/small/elyse.png">
+            <div class="content">
+                <div class="ui sub header">{{ email }}</div>
+                Student
+            </div>
+        </div>
+    </div>
+
+    <div class="ui clearing divider"></div>
+
+    <form>
+        <div class="ui input">
+            <input name="name" type="text" placeholder="Search..." value="{{ name or '' }}">
+        </div>
+
+        <button type="submit" class="ui button primary">Filter</button>
+    </form>
+
+    <div>
+        <button id="add_btn" class="ui button">
+            Add course
+        </button>
+        <button id="remove_btn" class="ui button">
+            Remove course
+        </button>
+    </div>
+
+    <!-- <div class="ui divider"></div> -->
+
+    <table id="course_table" class="ui celled table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.Name }}</td>
+                <td>{{ course.Value }}</td>
+                <td>{{ course.Score }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <th>{{'%0.2f'|format(total|float)}}</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div id="add_modal" class="ui modal">
+    <i class="close icon"></i>
+    <div class="header">
+        Add course
+    </div>
+    <div class="content">
+        <div class="ui form">
+            <div class="fields">
+                <div class="required field">
+                    <label>Course name</label>
+                    <input id="course_name" type="text" placeholder="Course name">
+                </div>
+                <div class="required field">
+                    <label>Course value</label>
+                    <input id="course_value" type="text" placeholder="Course value">
+                </div>
+                <div class="required field">
+                    <label>Course score</label>
+                    <input id="course_score" type="text" placeholder="Course score">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            Cancel
+        </div>
+        <div id="save_btn" class="ui positive right labeled icon button">
+            Add
+            <i class="plus icon"></i>
+        </div>
+    </div>
+</div>
+
+<div id="remove_modal" class="ui modal">
+    <i class="close icon"></i>
+    <div class="header">
+        Remove course
+    </div>
+    <div class="content">
+        <div class="ui form">
+            <div class="fields">
+                <div class="field">
+                    <label>Courses</label>
+                    <select id="select_remove" multiple="" class="ui dropdown">
+                        <option value="">Select Course</option>
+                        {% for course in courses %}
+                        <option value="{{ course.Name }}">{{ course.Name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            Cancel
+        </div>
+        <div id="delete_btn" class="ui positive right labeled icon button">
+            Remove
+            <i class="plus icon"></i>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
